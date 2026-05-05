@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply bg-background text-text antialiased;
+  }
+
+  body {
+    @apply m-0 min-h-screen bg-background font-sans text-text;
+    background-image:
+      radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 30%),
+      linear-gradient(180deg, #0d0f14 0%, #09090b 100%);
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  a {
+    @apply text-inherit no-underline;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}
