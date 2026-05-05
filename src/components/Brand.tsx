@@ -6,7 +6,7 @@ export function Brand({ compact = false }: BrandProps) {
   return (
     <div className="flex items-center gap-3">
       <img
-        alt="inucogn"
+        alt="icogn"
         className="h-9 w-9 rounded-2xl"
         height="36"
         src="/logo.svg"
@@ -14,8 +14,8 @@ export function Brand({ compact = false }: BrandProps) {
       />
       {!compact ? (
         <div className="space-y-0.5">
-          <p className="text-xs uppercase tracking-[0.3em] text-textMuted">inucogn</p>
-          <p className="text-sm font-medium text-text">Focus-driven cognition</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-textMuted">icogn</p>
+          <p className="text-sm font-medium text-text">Sharper judgment, daily.</p>
         </div>
       ) : null}
     </div>

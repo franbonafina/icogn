@@ -16,7 +16,7 @@ type CompletionRequestBody = {
 };
 
 export const health = onRequest((_request, response) => {
-  response.json({ ok: true, service: 'inucogn-functions' });
+  response.json({ ok: true, service: 'icogn-functions' });
 });
 
 export const complete = onRequest(

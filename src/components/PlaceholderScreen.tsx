@@ -38,7 +38,7 @@ export function PlaceholderScreen({
           <p className="text-3xl font-semibold tracking-tight text-text">{metric}</p>
         </div>
         <p className="text-sm leading-6 text-textMuted">
-          This screen is a placeholder scaffold for the first inucogn release.
+          This screen is a placeholder scaffold for the first icogn release.
         </p>
         <Button>{actionLabel}</Button>
       </Card>

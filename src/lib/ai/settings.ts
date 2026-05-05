@@ -6,7 +6,7 @@ export type AiSettings = {
   model: string;
 };
 
-const STORAGE_KEY = 'inucogn.ai.settings';
+const STORAGE_KEY = 'icogn.ai.settings';
 
 function isAiProvider(value: string): value is AiProvider {
   return value === 'groq' || value === 'openai' || value === 'anthropic';

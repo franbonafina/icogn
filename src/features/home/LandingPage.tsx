@@ -28,10 +28,10 @@ export function LandingPage() {
         <header className="flex items-center justify-between py-4">
           <div>
             <p className="text-xs font-medium uppercase tracking-[0.32em] text-textMuted">
-              CivicMind
+              icogn
             </p>
             <p className="mt-2 text-sm text-textMuted">
-              Internal leadership learning platform
+              Executive cognition, trained deliberately
             </p>
           </div>
 
@@ -44,14 +44,14 @@ export function LandingPage() {
           <section className="space-y-6 rounded-[2rem] border border-white/10 bg-black/20 px-5 py-8 backdrop-blur-sm sm:px-6">
             <div className="space-y-4">
               <p className="text-xs font-medium uppercase tracking-[0.28em] text-textMuted">
-                For leaders, operators, and high-agency teams
+                For leaders, operators, and demanding teams
               </p>
               <h1 className="max-w-3xl text-4xl font-semibold tracking-[-0.04em] text-text sm:text-5xl md:text-6xl">
                 Train memory, judgment, and expression every day.
               </h1>
               <p className="max-w-2xl text-base leading-7 text-textMuted sm:text-lg">
-                A mobile-first learning system for leaders, operators, and people
-                who need to think clearly, speak better, and decide under pressure.
+                icogn is a mobile-first learning system for people expected to think clearly,
+                speak with precision, and make better decisions when the stakes are real.
               </p>
             </div>
 
@@ -59,6 +59,16 @@ export function LandingPage() {
               <Link to="/login" className="sm:w-auto">
                 <Button className="w-full px-6 sm:w-auto">Enter with access code</Button>
               </Link>
+            </div>
+            <div className="grid gap-2 pt-1 sm:grid-cols-3">
+              {['Memory under pressure', 'Clearer argumentation', 'Sharper executive judgment'].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-textMuted"
+                >
+                  {item}
+                </div>
+              ))}
             </div>
           </section>
 
@@ -91,16 +101,16 @@ export function LandingPage() {
                   Positioning
                 </p>
                 <p className="text-xl font-medium leading-8 text-text">
-                  CivicMind helps people develop memory, judgment, argumentation,
-                  decision-making, and public expression through AI-assisted
-                  practice.
+                  icogn turns raw reading, notes, speeches, and hard-won experience
+                  into repeatable training for memory, judgment, argumentation,
+                  decision-making, and public expression.
                 </p>
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                 <p className="text-sm leading-6 text-textMuted">
-                  Designed for serious internal development rather than public,
-                  mass-market coursework.
+                  Positioned as a private, high-discipline learning environment rather
+                  than a casual education product.
                 </p>
               </div>
             </Card>
@@ -144,9 +154,8 @@ export function LandingPage() {
               </div>
 
               <p className="text-sm leading-7 text-textMuted">
-                The system is intended for organizations and curated groups that
-                want a disciplined environment for ongoing cognitive training,
-                practical judgment, and better public expression.
+                Built for organizations and curated cohorts that want measurable improvement
+                in recall, reasoning, communication, and leadership behavior over time.
               </p>
 
               <div className="grid gap-3 sm:grid-cols-2">
@@ -178,8 +187,8 @@ export function LandingPage() {
                 Access by invitation
               </p>
               <h2 className="max-w-2xl text-2xl font-semibold tracking-tight text-text">
-                Built for people who are expected to learn fast, think clearly,
-                and communicate well.
+                icogn is for people whose performance depends on what they remember,
+                how they reason, and how they communicate in public.
               </h2>
             </div>
 

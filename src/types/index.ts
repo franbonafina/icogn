@@ -3,6 +3,7 @@ export type AppRoute =
   | '/login'
   | '/app'
   | '/app/learn'
+  | '/app/learn/new'
   | '/app/speech'
   | '/app/decision'
   | '/app/profile';

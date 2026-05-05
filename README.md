@@ -1,6 +1,6 @@
-# CivicMind
+# icogn
 
-CivicMind is a mobile-first internal leadership learning platform focused on memory, judgment, argumentation, decision-making, and public expression through AI-assisted practice.
+icogn is a mobile-first internal leadership learning platform focused on memory, judgment, argumentation, decision-making, and public expression through AI-assisted practice.
 
 ## Stack
 

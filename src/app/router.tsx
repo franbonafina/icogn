@@ -4,6 +4,8 @@ import { AppShell } from '@/components/AppShell';
 import { LoginPage } from '@/features/auth/LoginPage';
 import { HomePage } from '@/features/home/HomePage';
 import { LearnPage } from '@/features/learning/LearnPage';
+import { LearningItemDetailPage } from '@/features/learning/LearningItemDetailPage';
+import { LearningItemNewPage } from '@/features/learning/LearningItemNewPage';
 import { DecisionPage } from '@/features/decision/DecisionPage';
 import { ProfilePage } from '@/features/profile/ProfilePage';
 import { SpeechPage } from '@/features/speech/SpeechPage';
@@ -37,6 +39,14 @@ export const router = createBrowserRouter([
       {
         path: 'learn',
         element: <LearnPage />,
+      },
+      {
+        path: 'learn/new',
+        element: <LearningItemNewPage />,
+      },
+      {
+        path: 'learn/:itemId',
+        element: <LearningItemDetailPage />,
       },
       {
         path: 'speech',
