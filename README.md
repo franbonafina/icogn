@@ -10,7 +10,6 @@ icogn is a mobile-first internal leadership learning platform focused on memory,
 - Tailwind CSS
 - Firebase Hosting
 - Cloud Firestore
-- Firebase Functions
 - Groq as the first LLM provider
 - Provider-agnostic AI layer prepared for OpenAI and Anthropic
 
@@ -20,7 +19,7 @@ icogn is a mobile-first internal leadership learning platform focused on memory,
 - Dark, mobile-first interface
 - Firestore repositories isolated from UI components
 - AI provider and model selection exposed in the profile layer
-- Firebase-ready frontend and backend structure
+- Firebase-ready frontend structure with direct browser AI for the private prototype
 
 ## Project structure
 
@@ -40,7 +39,6 @@ src/
     firebase/
     learning/
   types/
-functions/
 docs/
 ```
 
@@ -50,7 +48,6 @@ docs/
 
 ```bash
 npm install
-npm --prefix functions install
 ```
 
 2. Copy environment variables:
@@ -59,7 +56,7 @@ npm --prefix functions install
 cp .env.example .env.local
 ```
 
-3. Fill in the Firebase web config and default AI settings in `.env.local`.
+3. Fill in the Firebase web config, `VITE_GROQ_API_KEY`, and default AI settings in `.env.local`.
 
 4. Start the app:
 
@@ -78,19 +75,60 @@ Helpful commands:
 ```bash
 npm run firebase:build
 npm run firebase:deploy:firestore
-npm run firebase:deploy:functions
 npm run firebase:deploy:hosting
+npm run firebase:deploy:all
 npm run firebase:deploy
 ```
 
-See [docs/firebase-setup.md](docs/firebase-setup.md) for the CLI flow.
+## Development seeds
+
+Admin seed scripts are available for local development and use the Firebase Admin SDK.
+
+1. Create a local seed env file:
+
+```bash
+cp .env.seeds.example .env.seeds.local
+```
+
+2. Fill in:
+
+```bash
+FIREBASE_PROJECT_ID=
+FIREBASE_CLIENT_EMAIL=
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+SEED_USER_ID=demo-user
+SEED_ACCESS_CODE=CIVIC-DEMO-001
+```
+
+3. Run individual scripts:
+
+```bash
+npm run seed:access-codes
+npm run seed:learning-items
+npm run seed:decision-scenarios
+npm run seed:profile
+```
+
+4. Or run the full development seed:
+
+```bash
+npm run seed:dev
+```
+
+The seed set includes:
+
+- access code `CIVIC-DEMO-001`
+- demo learning items across democracy, leadership, negotiation, public speaking, product strategy, systems thinking, ethics, economics, civic institutions, and argumentation
+- demo decision scenarios
+- a demo profile memory record
 
 ## Secrets and config
 
 - Do not commit `.env.local`
 - Do not commit Firebase or Groq secrets
 - Keep frontend config in Vite env vars
-- Keep backend secrets in Firebase Functions secrets
+- For this private prototype, Groq is called directly from the browser via `VITE_GROQ_API_KEY`
+- Do not treat `VITE_GROQ_API_KEY` as a long-term secure secret
 
 ## Current status
 
@@ -99,3 +137,4 @@ See [docs/firebase-setup.md](docs/firebase-setup.md) for the CLI flow.
 - Public landing page implemented
 - Firestore data model and repositories implemented
 - Provider/model selection surfaced in the profile UI
+- AI flows run directly against Groq in the browser to remain compatible with Firebase Spark

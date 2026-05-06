@@ -13,7 +13,7 @@ type ButtonProps = PropsWithChildren<
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    'bg-text text-background hover:bg-accentMuted focus-visible:outline-text',
+    'bg-text text-background hover:bg-accentMuted focus-visible:outline-text shadow-[0_10px_30px_rgba(255,255,255,0.08)]',
   secondary:
     'bg-surfaceMuted text-text hover:bg-[#1c1f2a] focus-visible:outline-surfaceMuted',
   ghost:
@@ -30,7 +30,7 @@ export function Button({
   return (
     <button
       className={cn(
-        'inline-flex h-11 items-center justify-center rounded-2xl px-4 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60',
+        'inline-flex h-12 items-center justify-center rounded-2xl px-4 text-sm font-medium transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60',
         variants[variant],
         fullWidth && 'w-full',
         className,

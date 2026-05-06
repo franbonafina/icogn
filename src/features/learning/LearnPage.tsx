@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { PageHeader } from '@/components/PageHeader';
+import { ScreenState } from '@/components/ScreenState';
 import { cn } from '@/components/utils';
+import { saveLearningSession } from '@/features/learning/learningSessionService';
 import {
   calculateNextReview,
   createLearningSession,
@@ -61,7 +63,7 @@ export function LearnPage() {
     setDraftResponse('');
   }
 
-  function handleScore(score: number) {
+  async function handleScore(score: number) {
     if (!currentCard) {
       return;
     }
@@ -77,6 +79,15 @@ export function LearnPage() {
 
     setScoredItems((value) => ({ ...value, [currentCard.itemId]: score }));
     setReviewState((value) => ({ ...value, [currentCard.itemId]: nextReview }));
+    void saveLearningSession({
+      learningItemId: item.id,
+      learningMode: item.learningMode,
+      prompt: currentCard.prompt,
+      response: draftResponse || currentCard.answer,
+      score,
+      title: item.title,
+      tags: item.tags,
+    });
     advanceCard();
   }
 
@@ -84,7 +95,7 @@ export function LearnPage() {
     <div className="space-y-6">
       <PageHeader
         title="Learning engine"
-        description="One card at a time across spaced repetition, active recall, interleaving, and deliberate practice."
+        description="One clear rep at a time across recall, repetition, interleaving, and deliberate practice."
         action={
           <Link to="/app/learn/new">
             <Button variant="secondary">New item</Button>
@@ -195,8 +206,8 @@ export function LearnPage() {
             ) : null}
 
             <div className="space-y-3">
-              <p className="text-sm text-textMuted">
-                Self-score recall from 0 to 5. If the score is below 3, the item resets and returns soon.
+              <p className="text-sm leading-6 text-textMuted">
+                Score the quality of your recall from 0 to 5. Lower scores bring the item back sooner. Higher scores extend the interval.
               </p>
               <div className="grid grid-cols-3 gap-2">
                 {[0, 1, 2, 3, 4, 5].map((score) => (
@@ -213,9 +224,11 @@ export function LearnPage() {
             </div>
           </>
         ) : (
-          <p className="text-sm leading-6 text-textMuted">
-            No items are queued for this mode yet.
-          </p>
+          <ScreenState
+            eyebrow="Queue empty"
+            title="No items are ready in this mode."
+            description="Add a concept or switch modes to keep the session moving without forcing low-value repetitions."
+          />
         )}
       </Card>
 
@@ -230,9 +243,9 @@ export function LearnPage() {
           </div>
         </Card>
 
-        {Object.keys(reviewState).length > 0 ? (
-          <Card>
-            <p className="text-xs uppercase tracking-[0.24em] text-textMuted">Recent scoring</p>
+        <Card>
+          <p className="text-xs uppercase tracking-[0.24em] text-textMuted">Recent scoring</p>
+          {Object.keys(reviewState).length > 0 ? (
             <div className="mt-3 space-y-3">
               {Object.entries(reviewState).map(([itemId, result]) => (
                 <div key={itemId} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
@@ -243,8 +256,12 @@ export function LearnPage() {
                 </div>
               ))}
             </div>
-          </Card>
-        ) : null}
+          ) : (
+            <p className="mt-3 text-sm leading-6 text-textMuted">
+              Complete the first item to start building a review trace for this session.
+            </p>
+          )}
+        </Card>
       </div>
     </div>
   );

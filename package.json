@@ -5,16 +5,34 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:app": "vite",
     "build": "tsc -b && vite build",
+    "build:app": "tsc -b && vite build",
+    "build:all": "npm run build:app",
     "preview": "vite preview",
-    "firebase:build": "npm run build && npm --prefix functions run build",
-    "firebase:deploy": "npm run firebase:build && firebase deploy",
+    "preview:app": "vite preview",
+    "seed:dev": "tsx scripts/seed/devSeed.ts",
+    "seed:access-codes": "tsx scripts/seed/createAccessCodes.ts",
+    "seed:learning-items": "tsx scripts/seed/seedLearningItems.ts",
+    "seed:decision-scenarios": "tsx scripts/seed/seedDecisionScenarios.ts",
+    "seed:profile": "tsx scripts/seed/seedDemoProfile.ts",
+    "firebase:build": "npm run build:all",
+    "firebase:emulators": "firebase emulators:start",
+    "firebase:emulators:hosting": "firebase emulators:start --only hosting",
+    "firebase:emulators:firestore": "firebase emulators:start --only firestore",
     "firebase:deploy:hosting": "npm run build && firebase deploy --only hosting",
     "firebase:deploy:firestore": "firebase deploy --only firestore",
-    "firebase:deploy:functions": "npm --prefix functions run build && firebase deploy --only functions"
+    "firebase:deploy:rules": "firebase deploy --only firestore:rules",
+    "firebase:deploy:indexes": "firebase deploy --only firestore:indexes",
+    "firebase:deploy:web": "npm run firebase:deploy:hosting",
+    "firebase:deploy:infra": "npm run firebase:deploy:firestore",
+    "firebase:deploy:all": "npm run firebase:build && firebase deploy --only firestore,hosting",
+    "firebase:deploy": "npm run firebase:deploy:all"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "firebase": "^12.0.0",
+    "firebase-admin": "^13.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.0.0"
@@ -26,6 +44,7 @@
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.20.6",
     "typescript": "~5.8.3",
     "vite": "^7.0.0"
   }

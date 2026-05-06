@@ -9,6 +9,8 @@ vite.config.d.ts
 .env
 .env.local
 .env.*.local
+.env.seeds
+.env.seeds.local
 functions/.env
 functions/.env.*
 firebase-debug.log

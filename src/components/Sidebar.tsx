@@ -5,6 +5,7 @@ import { cn } from '@/components/utils';
 
 const navItems = [
   { to: '/app', label: 'Home' },
+  { to: '/app/formation', label: 'Formation' },
   { to: '/app/learn', label: 'Learning' },
   { to: '/app/speech', label: 'Speech' },
   { to: '/app/decision', label: 'Decision' },
@@ -20,6 +21,9 @@ export function Sidebar() {
           <h2 className="pt-2 text-2xl font-semibold tracking-tight text-text">
             Train better judgment.
           </h2>
+          <p className="max-w-xs text-sm leading-6 text-textMuted">
+            A private operating system for memory, argumentation, communication, and executive judgment.
+          </p>
         </div>
 
         <nav aria-label="Sidebar" className="space-y-2">
@@ -44,7 +48,7 @@ export function Sidebar() {
       </div>
 
       <p className="text-sm leading-6 text-textMuted">
-        AI-assisted workflows for memory, communication, decision-making, and leadership.
+        Server-side AI evaluation, deliberate practice, and steady profile memory over time.
       </p>
     </aside>
   );

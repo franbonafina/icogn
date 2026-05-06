@@ -1,28 +1,53 @@
-export type AiProvider = 'groq' | 'openai' | 'anthropic';
+export type AIProviderName = 'groq' | 'openai' | 'anthropic';
 
-export type AiMessage = {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
+export type ModelConfig = {
+  provider: AIProviderName;
+  modelName: string;
+  temperature: number;
 };
 
-export type AiCompletionRequest = {
+export type GenerateTextInput = {
+  systemPrompt: string;
+  userPrompt: string;
   model: string;
-  messages: AiMessage[];
   temperature?: number;
+  maxTokens?: number;
+  metadata?: Record<string, string | number | boolean | null>;
 };
 
-export type AiCompletionResponse = {
+export type GenerateTextResult = {
+  provider: AIProviderName;
+  model: string;
   text: string;
-  provider: AiProvider;
+  metadata?: Record<string, unknown>;
+};
+
+export type EvaluationInput = {
+  rubric: string;
+  userAnswer: string;
+  context: string;
+  expectedOutput?: string;
   model: string;
 };
 
-export interface AiClient {
-  provider: AiProvider;
-  complete(request: AiCompletionRequest): Promise<AiCompletionResponse>;
+export type EvaluationResult = {
+  provider: AIProviderName;
+  model: string;
+  summary: string;
+  strengths: string[];
+  improvements: string[];
+  rawText: string;
+};
+
+export interface LLMProvider {
+  name: AIProviderName;
+  generateText(input: GenerateTextInput): Promise<GenerateTextResult>;
+  evaluate(input: EvaluationInput): Promise<EvaluationResult>;
 }
 
 export type UserAiPreferences = {
-  provider: AiProvider;
+  provider: AIProviderName;
   model: string;
 };
+
+export type BackendAiTask = 'generateText' | 'evaluate';

@@ -55,10 +55,13 @@ export function LandingPage() {
               </p>
             </div>
 
-            <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+            <div className="flex flex-col gap-3 pt-2">
               <Link to="/login" className="sm:w-auto">
                 <Button className="w-full px-6 sm:w-auto">Enter with access code</Button>
               </Link>
+              <p className="text-sm leading-6 text-textMuted">
+                Built for internal cohorts, private programs, and high-accountability teams.
+              </p>
             </div>
             <div className="grid gap-2 pt-1 sm:grid-cols-3">
               {['Memory under pressure', 'Clearer argumentation', 'Sharper executive judgment'].map((item) => (

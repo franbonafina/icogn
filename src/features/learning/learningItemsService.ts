@@ -1,3 +1,5 @@
+import { getOrCreateAiSettings } from '@/features/settings/aiSettingsService';
+import { callGroqJson } from '@/lib/ai/groqBrowser';
 import { learningItemsRepository } from '@/lib/firebase/repositories';
 import type { LearningItem, LearningItemType, LearningMode } from '@/types/firestore';
 
@@ -11,6 +13,18 @@ export type LearningItemDraft = {
   tags: string[];
   difficulty: 1 | 2 | 3 | 4 | 5;
   learningMode: LearningMode;
+};
+
+type ExtractLearningItemsResult = {
+  items: Array<{
+    title: string;
+    type: LearningItemType;
+    content: string;
+    explanation: string;
+    tags: string[];
+    difficulty: 1 | 2 | 3 | 4 | 5;
+    suggestedLearningMode: LearningMode;
+  }>;
 };
 
 export type CreateLearningItemInput = {
@@ -116,6 +130,69 @@ export function mockExtractLearningItems(
   });
 
   return Array.from(uniqueDrafts.values());
+}
+
+export async function extractLearningItems(
+  rawText: string,
+  overrides: Partial<Omit<LearningItemDraft, 'rawText' | 'sourceText'>> = {},
+) {
+  const settings = await getOrCreateAiSettings();
+
+  if (settings.provider !== 'groq') {
+    return mockExtractLearningItems(rawText, overrides);
+  }
+
+  try {
+    const { parsed: payload } = await callGroqJson<ExtractLearningItemsResult>(
+      [
+        {
+          role: 'system',
+          content:
+            'You are a curriculum structuring assistant. Return strict JSON only and never include commentary.',
+        },
+        {
+          role: 'user',
+          content: [
+            'Convert the source text into learning item drafts.',
+            'Return strict JSON only.',
+            'Top-level schema: {"items":[{"title","type","content","explanation","tags","difficulty","suggestedLearningMode"}]}',
+            'Allowed type values: term, concept, quote, principle, framework, case.',
+            'Allowed suggestedLearningMode values: spaced_repetition, active_recall, interleaving, deliberate_practice.',
+            'Difficulty must be an integer from 1 to 5.',
+            overrides.type ? `Preferred type: ${overrides.type}` : '',
+            overrides.tags?.length ? `Preferred tags: ${overrides.tags.join(', ')}` : '',
+            `Source text:\n${rawText}`,
+          ]
+            .filter(Boolean)
+            .join('\n\n'),
+        },
+      ],
+      settings.modelName,
+      settings.temperature,
+      settings.maxTokens,
+    );
+
+    if (!Array.isArray(payload.items) || payload.items.length === 0) {
+      return mockExtractLearningItems(rawText, overrides);
+    }
+
+    return payload.items.map((item) => ({
+      rawText,
+      sourceText: rawText.trim(),
+      title: buildTitle(rawText, item.title || overrides.title),
+      type: item.type ?? overrides.type ?? 'concept',
+      content: normalizeWhitespace(item.content || rawText),
+      explanation: normalizeWhitespace(
+        item.explanation || overrides.explanation || `Practice recalling and applying: ${item.content || rawText}`,
+      ),
+      tags: item.tags?.length ? item.tags : overrides.tags ?? [],
+      difficulty: item.difficulty ?? overrides.difficulty ?? 3,
+      learningMode:
+        item.suggestedLearningMode ?? overrides.learningMode ?? 'active_recall',
+    }));
+  } catch {
+    return mockExtractLearningItems(rawText, overrides);
+  }
 }
 
 export async function saveLearningItem(input: CreateLearningItemInput) {

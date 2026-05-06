@@ -1,13 +1,13 @@
-import type { AiProvider } from '@/lib/ai/types';
+import type { AIProviderName } from '@/lib/ai/types';
 
 export type AiModelOption = {
   id: string;
   label: string;
-  provider: AiProvider;
+  provider: AIProviderName;
   status: 'active' | 'planned';
 };
 
-export const aiModelCatalog: Record<AiProvider, AiModelOption[]> = {
+export const aiModelCatalog: Record<AIProviderName, AiModelOption[]> = {
   groq: [
     {
       id: 'llama-3.3-70b-versatile',
@@ -52,6 +52,6 @@ export const aiModelCatalog: Record<AiProvider, AiModelOption[]> = {
   ],
 };
 
-export function getDefaultModelForProvider(provider: AiProvider) {
+export function getDefaultModelForProvider(provider: AIProviderName) {
   return aiModelCatalog[provider][0]?.id ?? '';
 }

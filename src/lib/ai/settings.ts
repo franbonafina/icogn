@@ -1,14 +1,14 @@
 import { getDefaultModelForProvider } from '@/lib/ai/catalog';
-import type { AiProvider } from '@/lib/ai/types';
+import type { AIProviderName } from '@/lib/ai/types';
 
 export type AiSettings = {
-  provider: AiProvider;
+  provider: AIProviderName;
   model: string;
 };
 
 const STORAGE_KEY = 'icogn.ai.settings';
 
-function isAiProvider(value: string): value is AiProvider {
+function isAiProvider(value: string): value is AIProviderName {
   return value === 'groq' || value === 'openai' || value === 'anthropic';
 }
 

@@ -4,13 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { PageHeader } from '@/components/PageHeader';
+import { ScreenState } from '@/components/ScreenState';
 import { SelectField } from '@/components/SelectField';
 import {
-  mockExtractLearningItems,
+  extractLearningItems,
   parseTags,
   saveLearningItem,
   type LearningItemDraft,
 } from '@/features/learning/learningItemsService';
+import { getCurrentAppUser } from '@/lib/firebase/currentUser';
 import type { LearningItemType, LearningMode } from '@/types/firestore';
 
 const typeOptions: LearningItemType[] = [
@@ -28,8 +30,6 @@ const modeOptions: LearningMode[] = [
   'interleaving',
   'deliberate_practice',
 ];
-
-const demoUserId = 'demo-user';
 
 export function LearningItemNewPage() {
   const navigate = useNavigate();
@@ -65,8 +65,9 @@ export function LearningItemNewPage() {
     setIsSaving(true);
 
     try {
+      const { userId } = await getCurrentAppUser();
       const item = await saveLearningItem({
-        userId: demoUserId,
+        userId,
         rawText,
         title,
         tags: parsedTags,
@@ -97,7 +98,7 @@ export function LearningItemNewPage() {
     setIsExtracting(true);
 
     try {
-      const drafts = mockExtractLearningItems(rawText, {
+      const drafts = await extractLearningItems(rawText, {
         title,
         tags: parsedTags,
         type,
@@ -221,12 +222,7 @@ export function LearningItemNewPage() {
         ) : null}
 
         <div className="flex flex-col gap-3">
-          <Button
-            fullWidth
-            onClick={handleExtract}
-            variant="secondary"
-            disabled={isExtracting}
-          >
+          <Button fullWidth onClick={handleExtract} variant="secondary" disabled={isExtracting}>
             {isExtracting ? 'Extracting...' : 'Extract learning items'}
           </Button>
           <Button fullWidth onClick={handleSave} disabled={isSaving}>
@@ -238,7 +234,7 @@ export function LearningItemNewPage() {
       {extractedDrafts.length > 0 ? (
         <div className="space-y-4">
           <p className="text-sm text-textMuted">
-            Mock extraction results. Tap one to apply it to the form.
+            Review the extracted drafts and tap one to apply it to the form.
           </p>
           <div className="grid gap-3">
             {extractedDrafts.map((draft, index) => (
@@ -259,7 +255,13 @@ export function LearningItemNewPage() {
             ))}
           </div>
         </div>
-      ) : null}
+      ) : (
+        <ScreenState
+          eyebrow="Extraction"
+          title="Paste material and extract structured learning items."
+          description="When Groq is configured, extraction runs directly from the app. Otherwise the app falls back to a local draft parser."
+        />
+      )}
     </div>
   );
 }

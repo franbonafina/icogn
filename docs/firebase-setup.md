@@ -4,7 +4,6 @@ This project is already wired for:
 
 - Firebase Hosting
 - Cloud Firestore
-- Firebase Functions
 
 The local config files are:
 
@@ -12,7 +11,6 @@ The local config files are:
 - `.firebaserc`
 - `firestore.rules`
 - `firestore.indexes.json`
-- `functions/`
 
 ## 1. Login to Firebase
 
@@ -71,36 +69,22 @@ Root app:
 npm install
 ```
 
-Functions:
-
-```bash
-cd functions
-npm install
-cd ..
-```
-
 ## 5. Deploy Firestore rules and indexes
 
 ```bash
 firebase deploy --only firestore
 ```
 
-## 6. Deploy functions
-
-```bash
-firebase deploy --only functions
-```
-
-## 7. Deploy hosting
+## 6. Deploy hosting
 
 ```bash
 firebase deploy --only hosting
 ```
 
-## 8. Deploy everything
+## 7. Deploy everything for the Firebase Spark-compatible setup
 
 ```bash
-firebase deploy
+firebase deploy --only firestore,hosting
 ```
 
 ## Project scripts
@@ -110,8 +94,8 @@ The repo also includes helper scripts:
 ```bash
 npm run firebase:build
 npm run firebase:deploy:firestore
-npm run firebase:deploy:functions
 npm run firebase:deploy:hosting
+npm run firebase:deploy:all
 npm run firebase:deploy
 ```
 
@@ -122,6 +106,5 @@ firebase login
 firebase use --add YOUR_PROJECT_ID
 firebase firestore:databases:create "(default)" --location=us-central1
 firebase deploy --only firestore
-firebase deploy --only functions
 firebase deploy --only hosting
 ```
