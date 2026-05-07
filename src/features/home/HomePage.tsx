@@ -6,221 +6,204 @@ import { Card } from '@/components/Card';
 import { PageHeader } from '@/components/PageHeader';
 import { ScreenState } from '@/components/ScreenState';
 import { Skeleton } from '@/components/Skeleton';
-import { loadHomeDashboard, type DashboardData } from '@/features/home/homeService';
+import { useLanguage } from '@/lib/useLanguage';
+import { getCurrentAuthUser } from '@/lib/auth/authService';
 
 function formatAverage(value: number | null) {
   return value === null ? 'N/A' : value.toFixed(1);
 }
 
 export function HomePage() {
-  const [dashboard, setDashboard] = useState<DashboardData | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
-
-  async function loadDashboard() {
-    try {
-      setErrorMessage('');
-      const nextDashboard = await loadHomeDashboard();
-      setDashboard(nextDashboard);
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : 'Could not load the home dashboard.',
-      );
-    }
-  }
+  const { language } = useLanguage();
+  const [user, setUser] = useState<{ uid: string; displayName: string; email: string; accessCode: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    void loadDashboard();
+    async function loadUser() {
+      try {
+        const currentUser = await getCurrentAuthUser();
+        if (!currentUser) {
+          // Redirect to login if no user
+          window.location.href = '/';
+          return;
+        }
+        setUser(currentUser);
+      } catch (error) {
+        console.error('Error loading user:', error);
+        window.location.href = '/';
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadUser();
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <p className="text-textMuted">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect
+  }
+
+  const quickActions = [
+    {
+      title: language === 'es' ? 'Agregar concepto' : 'Add concept',
+      description: language === 'es' ? 'Crear nueva tarjeta de aprendizaje' : 'Create new learning card',
+      to: '/app/learn/new',
+      variant: 'secondary' as const,
+    },
+    {
+      title: language === 'es' ? 'Iniciar repaso' : 'Start review',
+      description: language === 'es' ? 'Practicar conceptos pendientes' : 'Practice pending concepts',
+      to: '/app/learn',
+      variant: 'primary' as const,
+    },
+    {
+      title: language === 'es' ? 'Práctica de voz' : 'Speech practice',
+      description: language === 'es' ? 'Mejorar expresión oral' : 'Improve oral expression',
+      to: '/app/speech',
+      variant: 'secondary' as const,
+    },
+    {
+      title: language === 'es' ? 'Escenario decisión' : 'Decision scenario',
+      description: language === 'es' ? 'Practicar toma de decisiones' : 'Practice decision making',
+      to: '/app/decision',
+      variant: 'primary' as const,
+    },
+  ];
+
+  const features = [
+    {
+      title: language === 'es' ? 'Memoria' : 'Memory',
+      description: language === 'es' ? 'Ejercicios de retención y recuerdo' : 'Retention and recall exercises',
+      icon: '🧠',
+    },
+    {
+      title: language === 'es' ? 'Argumentación' : 'Argumentation',
+      description: language === 'es' ? 'Práctica de razonamiento y debate' : 'Reasoning and debate practice',
+      icon: '💬',
+    },
+    {
+      title: language === 'es' ? 'Expresión' : 'Expression',
+      description: language === 'es' ? 'Desarrollo de comunicación oral' : 'Oral communication development',
+      icon: '🎤',
+    },
+    {
+      title: language === 'es' ? 'Decisión' : 'Decision',
+      description: language === 'es' ? 'Simulaciones de liderazgo' : 'Leadership simulations',
+      icon: '⚡',
+    },
+  ];
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title={dashboard ? `Good focus, ${dashboard.greetingName}.` : 'Good focus.'}
-        description="Your personal operating system for learning, communication, and judgment."
+        title={language === 'es' ? `Buen enfoque, ${user.displayName}.` : `Good focus, ${user.displayName}.`}
+        description={language === 'es' 
+          ? 'Tu sistema operativo personal para aprendizaje, comunicación y juicio.'
+          : 'Your personal operating system for learning, communication, and judgment.'
+        }
       />
 
-      {errorMessage ? (
-        <ScreenState
-          eyebrow="Dashboard error"
-          title="The home view could not load."
-          description={errorMessage}
-          actionLabel="Try again"
-          onAction={() => void loadDashboard()}
-          tone="error"
-        />
-      ) : !dashboard ? (
-        <>
-          <Card elevated className="space-y-4 p-5">
-            <Skeleton className="h-3 w-24" />
-            <Skeleton className="h-10 w-3/4" />
-            <div className="grid gap-3">
-              <Skeleton className="h-20 rounded-3xl" />
-              <Skeleton className="h-20 rounded-3xl" />
-              <Skeleton className="h-20 rounded-3xl" />
-            </div>
-          </Card>
-          <div className="grid grid-cols-2 gap-3">
-            <Skeleton className="h-28 rounded-[1.75rem]" />
-            <Skeleton className="h-28 rounded-[1.75rem]" />
-            <Skeleton className="h-28 rounded-[1.75rem]" />
-            <Skeleton className="h-28 rounded-[1.75rem]" />
-          </div>
-        </>
-      ) : (
-        <>
-          <Card elevated className="space-y-4">
-            <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.24em] text-textMuted">
-                Today&apos;s queue
-              </p>
-              <h2 className="text-2xl font-semibold tracking-tight text-text">
-                Start with the next high-leverage reps.
-              </h2>
-            </div>
+      {/* Welcome Card */}
+      <Card elevated className="space-y-4">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-semibold tracking-tight text-text">
+            {language === 'es' ? 'Bienvenido a icogn' : 'Welcome to icogn'}
+          </h2>
+          <p className="text-sm leading-6 text-textMuted">
+            {language === 'es' 
+              ? 'Comienza tu entrenamiento cognitivo con nuestras herramientas de aprendizaje basadas en evidencia.'
+              : 'Start your cognitive training with our evidence-based learning tools.'
+            }
+          </p>
+        </div>
 
-            <div className="grid gap-3">
-              {dashboard.dueConcepts.length > 0 ? (
-                dashboard.dueConcepts.map((item) => (
-                  <div
-                    key={item.id}
-                    className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4"
-                  >
-                    <p className="text-sm font-medium text-text">{item.title}</p>
-                    <p className="mt-1 text-sm text-textMuted">{item.mode}</p>
-                  </div>
-                ))
-              ) : (
-                <div className="rounded-3xl border border-white/10 bg-white/[0.03] px-4 py-5">
-                  <p className="text-sm font-medium text-text">No due concepts right now.</p>
-                  <p className="mt-2 text-sm leading-6 text-textMuted">
-                    Use today&apos;s speech or decision practice to keep the rhythm without adding clutter.
-                  </p>
+        <div className="grid gap-3">
+          {features.map((feature) => (
+            <div
+              key={feature.title}
+              className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4"
+            >
+              <div className="flex items-start gap-3">
+                <span className="text-lg">{feature.icon}</span>
+                <div>
+                  <p className="text-sm font-medium text-text">{feature.title}</p>
+                  <p className="mt-1 text-sm text-textMuted">{feature.description}</p>
                 </div>
-              )}
+              </div>
             </div>
+          ))}
+        </div>
+      </Card>
 
-            <div className="grid gap-3">
-              <Card className="space-y-2">
-                <p className="text-xs uppercase tracking-[0.24em] text-textMuted">
-                  Suggested speech practice
-                </p>
-                <p className="text-sm leading-6 text-textMuted">
-                  {dashboard.suggestedSpeechPractice}
-                </p>
-              </Card>
+      {/* Quick Actions */}
+      <Card elevated className="space-y-4">
+        <div className="space-y-1">
+          <p className="text-xs uppercase tracking-[0.24em] text-textMuted">
+            {language === 'es' ? 'Acciones rápidas' : 'Quick actions'}
+          </p>
+          <h2 className="text-2xl font-semibold tracking-tight text-text">
+            {language === 'es' ? 'Inicia directamente la práctica' : 'Move directly into practice'}
+          </h2>
+        </div>
 
-              <Card className="space-y-2">
-                <p className="text-xs uppercase tracking-[0.24em] text-textMuted">
-                  Suggested decision scenario
-                </p>
-                <p className="text-sm font-medium text-text">
-                  {dashboard.suggestedDecisionScenario.title}
-                </p>
-                <p className="text-sm leading-6 text-textMuted">
-                  {dashboard.suggestedDecisionScenario.summary}
-                </p>
-              </Card>
-            </div>
-          </Card>
+        <div className="grid grid-cols-2 gap-3">
+          {quickActions.map((action) => (
+            <Link key={action.title} to={action.to}>
+              <Button 
+                fullWidth 
+                className="h-14" 
+                variant={action.variant}
+              >
+                {action.title}
+              </Button>
+            </Link>
+          ))}
+        </div>
+      </Card>
 
-          <div className="grid grid-cols-2 gap-3">
-            <Card className="space-y-1 p-4">
-              <p className="text-xs uppercase tracking-[0.22em] text-textMuted">
-                Concepts reviewed
-              </p>
-              <p className="text-3xl font-semibold tracking-tight text-text">
-                {dashboard.progress.conceptsReviewed}
-              </p>
-            </Card>
-            <Card className="space-y-1 p-4">
-              <p className="text-xs uppercase tracking-[0.22em] text-textMuted">
-                Recall avg
-              </p>
-              <p className="text-3xl font-semibold tracking-tight text-text">
-                {formatAverage(dashboard.progress.recallScoreAverage)}
-              </p>
-            </Card>
-            <Card className="space-y-1 p-4">
-              <p className="text-xs uppercase tracking-[0.22em] text-textMuted">
-                Speech avg
-              </p>
-              <p className="text-3xl font-semibold tracking-tight text-text">
-                {formatAverage(dashboard.progress.speechScoreAverage)}
-              </p>
-            </Card>
-            <Card className="space-y-1 p-4">
-              <p className="text-xs uppercase tracking-[0.22em] text-textMuted">
-                Decision avg
-              </p>
-              <p className="text-3xl font-semibold tracking-tight text-text">
-                {formatAverage(dashboard.progress.decisionScoreAverage)}
-              </p>
-            </Card>
+      {/* Progress Placeholder */}
+      <Card className="space-y-4">
+        <div className="space-y-1">
+          <p className="text-xs uppercase tracking-[0.24em] text-textMuted">
+            {language === 'es' ? 'Progreso' : 'Progress'}
+          </p>
+          <h2 className="text-2xl font-semibold tracking-tight text-text">
+            {language === 'es' ? 'Tu viaje de aprendizaje' : 'Your learning journey'}
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1 p-4 rounded-2xl border border-white/10 bg-white/[0.03]">
+            <p className="text-xs uppercase tracking-[0.22em] text-textMuted">
+              {language === 'es' ? 'Sesiones' : 'Sessions'}
+            </p>
+            <p className="text-3xl font-semibold tracking-tight text-text">0</p>
           </div>
+          <div className="space-y-1 p-4 rounded-2xl border border-white/10 bg-white/[0.03]">
+            <p className="text-xs uppercase tracking-[0.22em] text-textMuted">
+              {language === 'es' ? 'Racha' : 'Streak'}
+            </p>
+            <p className="text-3xl font-semibold tracking-tight text-text">0</p>
+          </div>
+        </div>
 
-          <Card elevated className="space-y-4">
-            <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.24em] text-textMuted">
-                Profile insight
-              </p>
-              <h2 className="text-2xl font-semibold tracking-tight text-text">
-                One signal to protect. One weakness to attack.
-              </h2>
-            </div>
-
-            <div className="grid gap-3">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4">
-                <p className="text-xs uppercase tracking-[0.22em] text-textMuted">Strength</p>
-                <p className="mt-2 text-sm text-text">{dashboard.insight.strength}</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4">
-                <p className="text-xs uppercase tracking-[0.22em] text-textMuted">Weakness</p>
-                <p className="mt-2 text-sm text-text">{dashboard.insight.weakness}</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4">
-                <p className="text-xs uppercase tracking-[0.22em] text-textMuted">
-                  Recommended action
-                </p>
-                <p className="mt-2 text-sm text-text">{dashboard.insight.recommendedAction}</p>
-              </div>
-            </div>
-          </Card>
-
-          <Card elevated className="space-y-4">
-            <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.24em] text-textMuted">
-                Quick actions
-              </p>
-              <h2 className="text-2xl font-semibold tracking-tight text-text">
-                Move directly into practice.
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <Link to="/app/learn/new">
-                <Button fullWidth className="h-14" variant="secondary">
-                  Add concept
-                </Button>
-              </Link>
-              <Link to="/app/learn">
-                <Button fullWidth className="h-14">
-                  Start review
-                </Button>
-              </Link>
-              <Link to="/app/speech">
-                <Button fullWidth className="h-14" variant="secondary">
-                  Practice speech
-                </Button>
-              </Link>
-              <Link to="/app/decision">
-                <Button fullWidth className="h-14">
-                  Decision scenario
-                </Button>
-              </Link>
-            </div>
-          </Card>
-        </>
-      )}
+        <p className="text-sm text-textMuted">
+          {language === 'es' 
+            ? 'Comienza tu primera sesión para ver tu progreso aquí.'
+            : 'Start your first session to see your progress here.'
+          }
+        </p>
+      </Card>
     </div>
   );
 }
